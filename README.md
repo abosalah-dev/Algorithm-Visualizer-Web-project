@@ -1,73 +1,124 @@
-# Welcome to your Lovable project
+# 🧮 AlgoLab - Interactive Algorithm Visualizer
 
-## Project info
+AlgoLab is an interactive platform designed to help you learn and understand algorithms through step-by-step visualizations. Explore sorting, searching, graph algorithms, and more in a hands-on environment.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🛠️ Tech Stack
 
-## How can I edit this code?
+| Technology | Purpose |
+|------------|---------|
+| **Vite** | Fast build tool & dev server |
+| **React 18** | UI framework |
+| **TypeScript** | Type safety |
+| **Tailwind CSS** | Styling |
+| **shadcn/ui** | UI components |
+| **Netlify Functions** | Serverless backend (AI Chatbot) |
+| **OpenRouter API** | AI-powered algorithm tutor |
 
-There are several ways of editing your application.
+## 📋 Prerequisites
 
-**Use Lovable**
+Before running this project, make sure you have:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
+- **npm** (comes with Node.js)
+- **Netlify CLI** (optional, for full features) - installed automatically with dependencies
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Getting Started
 
-**Use your preferred IDE**
+### 1. Clone the repository
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+cd Algo-Lab
 ```
 
-**Edit a file directly in GitHub**
+### 2. Install dependencies
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm install
+```
 
-**Use GitHub Codespaces**
+### 3. Set up environment variables (for AI Chatbot)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Create a `.env` file in the root directory:
 
-## What technologies are used for this project?
+```env
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
 
-This project is built with:
+> 💡 Get your API key from [OpenRouter](https://openrouter.ai/)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 4. Run the development server
 
-## How can I deploy this project?
+**Option A: Without AI Chatbot (Vite only)**
+```bash
+npm run dev:vite
+```
+Opens at: `http://localhost:5173`
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+**Option B: With AI Chatbot (Netlify Dev)**
+```bash
+npm run dev:netlify
+```
+Opens at: `http://localhost:8888`
 
-## Can I connect a custom domain to my Lovable project?
+## 📜 Available Scripts
 
-Yes, you can!
+| Command | Description |
+|---------|-------------|
+| `npm install` | Install all dependencies |
+| `npm run dev:vite` | Start Vite dev server (no backend) |
+| `npm run dev:netlify` | Start with Netlify Functions (AI Chatbot) |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📁 Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+Algo-Lab/
+├── src/
+│   ├── pages/              # Page components
+│   │   ├── Home.tsx
+│   │   ├── AlgorithmVisualizer.tsx
+│   │   ├── AlgorithmBattle.tsx
+│   │   ├── LearningTest.tsx
+│   │   └── Docs.tsx
+│   ├── components/         # Reusable UI components
+│   ├── algorithms/         # Algorithm implementations
+│   └── App.tsx             # Main app entry
+├── netlify/
+│   └── functions/          # Serverless functions
+│       └── chatbot.js      # AI Tutor API
+├── public/                 # Static assets
+├── package.json
+├── netlify.toml            # Netlify configuration
+├── vite.config.ts          # Vite configuration
+└── tailwind.config.ts      # Tailwind configuration
+```
+
+## ✨ Features
+
+- 📊 **Interactive Visualizations** - Step-by-step algorithm animations
+- 🤖 **AI Tutor** - Ask questions about any algorithm
+- ⚔️ **Algorithm Battle** - Compare algorithms side by side
+- 📚 **Learning Tests** - Practice with algorithm problems
+- 🎨 **Modern UI** - Clean, responsive design
+
+## 🌐 Deployment
+
+This project is configured for **Netlify** deployment:
+
+1. Push your code to GitHub
+2. Connect your repo to Netlify
+3. Set the `OPENROUTER_API_KEY` environment variable in Netlify dashboard
+4. Deploy!
+
+Build settings are already configured in `netlify.toml`.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+TEKERS License

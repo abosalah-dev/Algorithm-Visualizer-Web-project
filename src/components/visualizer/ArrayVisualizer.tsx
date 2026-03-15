@@ -1,6 +1,6 @@
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { VisualizationStep } from '@/types/algorithm';
+import type { VisualizationStep } from '@/types/algorithm';
 
 interface ArrayVisualizerProps {
   currentStep: VisualizationStep | null;
@@ -8,45 +8,6 @@ interface ArrayVisualizerProps {
 }
 
 export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState(250);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (containerRef.current) {
-        // Get the actual height of the container (accounting for padding)
-        const height = containerRef.current.clientHeight;
-        if (height > 0) {
-          setContainerHeight(height);
-        }
-      }
-    };
-
-    // Update height on mount and when array changes
-    updateHeight();
-    
-    // Use a small timeout to ensure DOM is fully rendered
-    const timeoutId = setTimeout(updateHeight, 10);
-    
-    // Use ResizeObserver for more accurate height tracking
-    let resizeObserver: ResizeObserver | null = null;
-    if (containerRef.current && window.ResizeObserver) {
-      resizeObserver = new ResizeObserver(() => {
-        updateHeight();
-      });
-      resizeObserver.observe(containerRef.current);
-    }
-    
-    window.addEventListener('resize', updateHeight);
-    return () => {
-      window.removeEventListener('resize', updateHeight);
-      clearTimeout(timeoutId);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-    };
-  }, [currentStep]);
-
   const { array, compareIndices, swapIndices, sortedIndices, pivotIndex, foundIndex, searchRange } = useMemo(() => {
     if (!currentStep) {
       return { 
@@ -110,12 +71,16 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
     return Math.max(...array);
   }, [array]);
 
-  // Calculate the scale factor so the tallest bar fits the container
-  const scaleFactor = useMemo(() => {
-    if (maxValue === 0 || containerHeight === 0) return 0;
-    // Use 90% of container height to leave some margin
-    return (containerHeight * 0.9) / maxValue;
-  }, [maxValue, containerHeight]);
+  // Calculate min value to handle negative numbers
+  const minValue = useMemo(() => {
+    if (array.length === 0) return 0;
+    return Math.min(...array);
+  }, [array]);
+
+  // Calculate the range for proper scaling
+  const valueRange = useMemo(() => {
+    return maxValue - Math.min(minValue, 0);
+  }, [maxValue, minValue]);
 
   if (array.length === 0) {
     return (
@@ -127,15 +92,11 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
 
   return (
     <div className={cn('glass-panel p-6', className)}>
-      <div 
-        ref={containerRef}
-        className="h-full flex items-end justify-center gap-1 md:gap-2"
-      >
+      <div className="h-full flex items-end justify-center gap-1 md:gap-2">
         {array.map((value, index) => {
-          // Calculate height in pixels based on the value and scale factor
-          const heightPx = value * scaleFactor;
-          // Ensure minimum height of 4px for visibility, but keep it proportional
-          const finalHeight = Math.max(heightPx, 4);
+          // Calculate height as percentage of the range, ensuring minimum visibility
+          const normalizedValue = value - Math.min(minValue, 0);
+          const heightPercent = valueRange > 0 ? (normalizedValue / valueRange) * 100 : 50;
           
           const isComparing = compareIndices.includes(index);
           const isSwapping = swapIndices.includes(index);
@@ -149,40 +110,44 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
             <div
               key={index}
               className="flex flex-col items-center gap-2 flex-1 max-w-16"
+              style={{ height: '100%' }}
             >
-              <div
-                className={cn(
-                  'w-full rounded-t-md transition-all duration-300 relative',
-                  isFound && 'bg-success glow-secondary animate-pulse',
-                  isMid && 'bg-info glow-secondary',
-                  isComparing && !isMid && 'bg-secondary glow-secondary',
-                  isSwapping && 'bg-primary glow-primary animate-pulse',
-                  isSorted && 'bg-success',
-                  isPivot && 'bg-secondary glow-secondary',
-                  isInRange && !isMid && !isFound && 'bg-accent',
-                  !isComparing && !isSwapping && !isSorted && !isPivot && !isInRange && !isMid && !isFound && 'bg-muted'
-                )}
-                style={{ 
-                  height: `${finalHeight}px`,
-                }}
-              >
-                {(isComparing || isSwapping || isPivot || isMid || isFound) && (
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                    <span className={cn(
-                      'text-xs font-bold px-1.5 py-0.5 rounded',
-                      isFound && 'bg-success text-success-foreground',
-                      isMid && !isFound && 'bg-info text-foreground',
-                      isPivot && 'bg-secondary text-secondary-foreground',
-                      isSwapping && 'bg-primary text-primary-foreground',
-                      isComparing && !isMid && 'bg-secondary/80 text-secondary-foreground'
-                    )}>
-                      {isFound ? '✓' : isMid ? 'mid' : isPivot ? 'P' : isSwapping ? '↔' : '⟷'}
-                    </span>
-                  </div>
-                )}
+              <div className="flex-1 w-full flex items-end justify-center">
+                <div
+                  className={cn(
+                    'w-full rounded-t-md transition-all duration-300 relative',
+                    isFound && 'bg-success glow-secondary animate-pulse',
+                    isMid && 'bg-info glow-secondary',
+                    isComparing && !isMid && 'bg-secondary glow-secondary',
+                    isSwapping && 'bg-primary glow-primary animate-pulse',
+                    isSorted && 'bg-success',
+                    isPivot && 'bg-secondary glow-secondary',
+                    isInRange && !isMid && !isFound && 'bg-accent',
+                    !isComparing && !isSwapping && !isSorted && !isPivot && !isInRange && !isMid && !isFound && 'bg-muted'
+                  )}
+                  style={{ 
+                    height: `${Math.max(heightPercent, 8)}%`,
+                    minHeight: '16px',
+                  }}
+                >
+                  {(isComparing || isSwapping || isPivot || isMid || isFound) && (
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2">
+                      <span className={cn(
+                        'text-xs font-bold px-1.5 py-0.5 rounded',
+                        isFound && 'bg-success text-success-foreground',
+                        isMid && !isFound && 'bg-info text-foreground',
+                        isPivot && 'bg-secondary text-secondary-foreground',
+                        isSwapping && 'bg-primary text-primary-foreground',
+                        isComparing && !isMid && 'bg-secondary/80 text-secondary-foreground'
+                      )}>
+                        {isFound ? '✓' : isMid ? 'mid' : isPivot ? 'P' : isSwapping ? '↔' : '⟷'}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
               <span className={cn(
-                'text-xs font-mono transition-colors',
+                'text-xs font-mono transition-colors flex-shrink-0',
                 (isComparing || isSwapping || isMid || isFound) ? 'text-foreground font-bold' : 'text-muted-foreground'
               )}>
                 {value}

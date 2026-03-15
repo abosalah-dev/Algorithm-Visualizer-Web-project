@@ -1,19 +1,26 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Github, BookOpen, Sparkles } from 'lucide-react';
+import { Menu, Github, BookOpen, Sparkles, PanelLeftClose, PanelLeft, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/hooks/use-theme';
 
 interface NavbarProps {
   onMenuToggle: () => void;
+  showMenuButton?: boolean;
+  sidebarOpen?: boolean;
 }
 
-export function Navbar({ onMenuToggle }: NavbarProps) {
+export function Navbar({ onMenuToggle, showMenuButton = false, sidebarOpen = false }: NavbarProps) {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const navLinks = [
     { to: '/', label: 'Home' },
-    { to: '/algorithms', label: 'Algorithms' },
-    { to: '/docs', label: 'Docs' },
+    { to: '/algorithm-battle', label: 'Algorithm Battle' },
+    { to: '/learning-test', label: 'Learning Test' },
+    { to: "/algorithms", label: "Algorithms" },
+    { to: "/algorithm-decision", label: "Decision Tree" },
+    { to: "/system-design", label: "System Design" },
   ];
 
   return (
@@ -21,6 +28,7 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left section */}
         <div className="flex items-center gap-4">
+          {/* Mobile hamburger - always shown on mobile */}
           <Button
             variant="ghost"
             size="icon"
@@ -29,6 +37,23 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          {/* Desktop sidebar toggle - shown only on algorithm pages */}
+          {showMenuButton && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onMenuToggle}
+              className="hidden lg:flex text-muted-foreground hover:text-foreground transition-colors"
+              title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            >
+              {sidebarOpen ? (
+                <PanelLeftClose className="h-5 w-5" />
+              ) : (
+                <PanelLeft className="h-5 w-5" />
+              )}
+            </Button>
+          )}
 
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
@@ -59,6 +84,20 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
 
         {/* Right section */}
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="text-muted-foreground hover:text-foreground"
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+
           <Link to="/docs">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
               <BookOpen className="h-5 w-5" />

@@ -8,7 +8,7 @@ interface GridVisualizerProps {
 }
 
 export function GridVisualizer({ currentStep, className }: GridVisualizerProps) {
-  const { board, n, tryingRow, tryingCol, isSafe, solutionFound, solutionNumber, solutionsCount } = useMemo(() => {
+  const { board, n, tryingRow, tryingCol, isSafe, solutionFound } = useMemo(() => {
     if (!currentStep) {
       return {
         board: [] as number[],
@@ -17,8 +17,6 @@ export function GridVisualizer({ currentStep, className }: GridVisualizerProps) 
         tryingCol: -1,
         isSafe: true,
         solutionFound: false,
-        solutionNumber: 0,
-        solutionsCount: 0,
       };
     }
 
@@ -30,9 +28,7 @@ export function GridVisualizer({ currentStep, className }: GridVisualizerProps) 
       tryingRow: (payload.row as number) ?? -1,
       tryingCol: (payload.col as number) ?? -1,
       isSafe: (payload.safe as boolean) ?? true,
-      solutionFound: currentStep.kind === 'solution-found' || currentStep.kind === 'complete',
-      solutionNumber: (payload.solutionNumber as number) || 0,
-      solutionsCount: (payload.solutionsCount as number) || 0,
+      solutionFound: currentStep.kind === 'solution-found',
     };
   }, [currentStep]);
 
@@ -113,16 +109,9 @@ export function GridVisualizer({ currentStep, className }: GridVisualizerProps) 
         {/* Status */}
         <div className="text-center">
           {solutionFound && (
-            <div>
-              <p className="text-success font-semibold animate-pulse">
-                ✓ Solution Found!
-              </p>
-              {solutionsCount > 0 && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Solution {solutionNumber > 0 ? solutionNumber : 1} of {solutionsCount}
-                </p>
-              )}
-            </div>
+            <p className="text-success font-semibold animate-pulse">
+              ✓ Solution Found!
+            </p>
           )}
           {tryingRow >= 0 && !solutionFound && (
             <p className="text-sm text-muted-foreground">
