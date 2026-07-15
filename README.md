@@ -1,5 +1,9 @@
 # 🧮 AlgoLab - Interactive Algorithm Visualizer
 
+[![Live Demo on Vercel](https://img.shields.io/badge/Live%20Demo-Visit%20Vercel%20App-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://algorithm-visualizer-web-project.vercel.app)
+
+**🌟 Live Demo:** [https://algorithm-visualizer-web-project.vercel.app](https://algorithm-visualizer-web-project.vercel.app)
+
 AlgoLab is an interactive platform designed to help you learn and understand algorithms through step-by-step visualizations. Explore sorting, searching, graph algorithms, and more in a hands-on environment.
 
 ## 🛠️ Tech Stack
@@ -11,8 +15,8 @@ AlgoLab is an interactive platform designed to help you learn and understand alg
 | **TypeScript** | Type safety |
 | **Tailwind CSS** | Styling |
 | **shadcn/ui** | UI components |
-| **Netlify Functions** | Serverless backend (AI Chatbot) |
-| **OpenRouter API** | AI-powered algorithm tutor |
+| **Vercel / Node.js** | Serverless backend (`/api/chatbot` & `/api/generate-problem`) |
+| **OpenRouter API** | AI-powered algorithm tutor & problem generator |
 
 ## 📋 Prerequisites
 
@@ -49,17 +53,24 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 
 ### 4. Run the development server
 
-**Option A: Without AI Chatbot (Vite only)**
+**Option A: Frontend Only (Vite)**
 ```bash
 npm run dev:vite
 ```
 Opens at: `http://localhost:5173`
 
-**Option B: With AI Chatbot (Netlify Dev)**
+**Option B: Fullstack with AI Backend (Express Server + Vite)**
+Open two terminals:
+1. Start the local backend API server (`port 3001`):
 ```bash
-npm run dev:netlify
+cd server
+npm install
+npm run dev
 ```
-Opens at: `http://localhost:8888`
+2. Start the Vite dev server (`port 5173` with proxy to `/api`):
+```bash
+npm run dev:vite
+```
 
 ## 📜 Available Scripts
 
@@ -76,6 +87,12 @@ Opens at: `http://localhost:8888`
 
 ```
 Algo-Lab/
+├── api/                    # Vercel Serverless Functions
+│   ├── chatbot.ts          # AI Tutor endpoint (/api/chatbot)
+│   └── generate-problem.ts # AI Problem Generator endpoint (/api/generate-problem)
+├── server/                 # Express backend server for local dev & alternative deployment
+│   ├── src/index.ts
+│   └── package.json
 ├── src/
 │   ├── pages/              # Page components
 │   │   ├── Home.tsx
@@ -86,12 +103,9 @@ Algo-Lab/
 │   ├── components/         # Reusable UI components
 │   ├── algorithms/         # Algorithm implementations
 │   └── App.tsx             # Main app entry
-├── netlify/
-│   └── functions/          # Serverless functions
-│       └── chatbot.js      # AI Tutor API
 ├── public/                 # Static assets
+├── vercel.json             # Vercel routing configuration
 ├── package.json
-├── netlify.toml            # Netlify configuration
 ├── vite.config.ts          # Vite configuration
 └── tailwind.config.ts      # Tailwind configuration
 ```
@@ -106,14 +120,15 @@ Algo-Lab/
 
 ## 🌐 Deployment
 
-This project is configured for **Netlify** deployment:
+This project is fully configured and deployed on **Vercel** (`vercel.json` + serverless functions in `api/`):
 
-1. Push your code to GitHub
-2. Connect your repo to Netlify
-3. Set the `OPENROUTER_API_KEY` environment variable in Netlify dashboard
-4. Deploy!
+**🌟 Live URL:** [https://algorithm-visualizer-web-project.vercel.app](https://algorithm-visualizer-web-project.vercel.app)
 
-Build settings are already configured in `netlify.toml`.
+### Deploying Your Own Instance on Vercel:
+1. Push your code repository to GitHub.
+2. Import the repository into [Vercel](https://vercel.com/).
+3. Add the `OPENROUTER_API_KEY` environment variable inside your Vercel Project Settings (`Settings` -> `Environment Variables`).
+4. Click **Deploy**! Vercel automatically deploys the Vite frontend alongside the serverless functions in `/api`.
 
 ## 🤝 Contributing
 
